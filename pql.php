@@ -48,15 +48,21 @@ class pql {
 
     private static function parse_row($row) {
         $new_row = array();
+
         if (!is_array($row)) return array();
+        
         for ($i = 0; $i < count($row); $i += 2) {
             $index_key = array_keys($row)[$i];
             $name_key = isset(array_keys($row)[$i + 1]) ? array_keys($row)[$i + 1] : null;
 
-            if (is_numeric($name_key)) $i -= 1;
+            if (is_numeric($name_key)) {
+                $i -= 1;
+                continue;
+            }
 
             $new_row[$name_key] = $row[$index_key];
         }
+
         return $new_row;
     }
 
