@@ -2,18 +2,22 @@
 
 class pql {
 
+    protected string $className;
     protected string $query;
+    protected array $params;
 
-    public static function query() {
-
+    public static function query(string $query, ...$params) {
+        $instance = new self();
+        $instance->query = $query;
+        $instance->params = $params;
+        return $instance;
     }
 
     public static function query_as(string $className, string $query, ...$params) {
         $instance = new self();
-        echo "Type: {$className}\n";
-        echo "Query: {$query}\n";
-        echo "Parameters: " . implode(', ', $params) . "\n";
+        $instance->className = $className;
         $instance->query = $query;
+        $instance->params = $params;
         return $instance;
     }
 
@@ -22,11 +26,39 @@ class pql {
     }
 
     public function fetch_one(SQLite3 $conn) {
+        $stmt = $conn->prepare($this->query);
+
+        for ($i = 1; $i <= count($this->params); $i++) {
+            $stmt->bindParam($i, $this->params[$i]);
+        }
         
+        $result = $stmt->execute();
+
+        $row = $result->fetchArray(SQLITE3_ASSOC);
+
+        if (isset($this->className)) $value = new $this->className($row);
+        else $value = $row;
+
+        return $value;
     }
 
-    public function fetch_all() {
+    public function fetch_all(SQLite3 $conn) {
+        $stmt = $conn->prepare($this->query);
 
+        for ($i = 1; $i <= count($this->params); $i++) {
+            $stmt->bindParam($i, $this->params[$i]);
+        }
+
+        $result = $stmt->execute();
+
+        $rows = array();
+
+        while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
+            if (isset($this->className)) $rows[] = new $this->className($row);
+            else $rows[] = $row;
+        }
+
+        return $rows;
     }
 
 }
