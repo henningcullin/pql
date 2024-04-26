@@ -9,33 +9,33 @@ if (!file_exists($dir)) {
     mkdir($dir, 0775, true);
 }
 
-class Task {
+class Task extends FromRow{
     public int $id;
     public string $title;
     public string $description;
     public Machine $machine;
+}
 
-    public function __construct($row)
+/*     public function __construct($row)
     {
         $this->id = $row['id'];
         $this->title = $row['title'];
         $this->description = $row['description'];
         $this->machine = new Machine($row);
-    }
-}
+    } */
 
-class Machine {
+class Machine extends FromRow {
     public int $id;
     public string $name;
     public string $make;
-
-    public function __construct($row)
-    {
-        $this->id = $row['machine'];
-        $this->name = $row['name'];
-        $this->make = $row['make'];
-    }
 }
+
+/* public function __construct($row)
+{
+    $this->id = $row['machine'];
+    $this->name = $row['name'];
+    $this->make = $row['make'];
+} */
 
 $conn = new SQLite3($dir . $file);
 

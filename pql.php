@@ -1,5 +1,16 @@
 <?php
 
+class FromRow {
+    public function __construct(array $row)
+    {
+        foreach ($row as $key => $value) {
+            if (property_exists($this, $key)) {
+                $this->$key = $value;
+            }
+        }
+    }
+}
+
 class pql {
 
     protected $class;
@@ -62,6 +73,8 @@ class pql {
 
             $new_row[$name_key] = $row[$index_key];
         }
+
+        var_dump($new_row);
 
         return $new_row;
     }
