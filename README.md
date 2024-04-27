@@ -63,6 +63,20 @@ $result = pql::query_as(
 )->fetch_all($conn);
 ```
 
+#### Example with join & params
+
+```php
+$result = pql::query_as(
+    Task::class,
+    'SELECT task.id, task.title, task.description, machine.id, machine.name, machine.make FROM 
+        task
+    LEFT JOIN 
+        machine ON machine.id = task.machine
+    WHERE machine.id = ?;',
+    1
+)->fetch_all($conn);
+```
+
 ## 3 Setup
 
 I am not quite sure of what exactly you need to do. But here is what I do to enable the SQLite3 extension in php:
