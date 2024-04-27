@@ -9,20 +9,13 @@ if (!file_exists($dir)) {
     mkdir($dir, 0775, true);
 }
 
-class Task extends FromRow{
+class Task extends FromRow {
     public int $id;
     public string $title;
     public string $description;
     public Machine $machine;
 }
 
-/*     public function __construct($row)
-    {
-        $this->id = $row['id'];
-        $this->title = $row['title'];
-        $this->description = $row['description'];
-        $this->machine = new Machine($row);
-    } */
 
 class Machine extends FromRow {
     public int $id;
@@ -69,20 +62,13 @@ $result = $conn->query('INSERT INTO task (title, description, machine) VALUES("N
 
 $result = pql::query_as(
     Task::class,
-    'SELECT * FROM task LEFT JOIN machine ON task.machine = machine.id WHERE machine.id <> ?',
-    4
+    'SELECT task.id, task.title, task.description, machine.id, machine.name, machine.make FROM 
+        task
+    LEFT JOIN 
+        machine ON machine.id = task.machine
+    WHERE machine.id = ?;',
+    1
 )->fetch_all($conn);
 
-if (is_array($result)) {
-    foreach ($result as $row) {
-        echo '<hr>';
-        echo '<pre>';
-        var_dump($row);
-        echo '</pre>';
-    }
-} else {
-    echo '<pre>';
-    var_dump($result);
-    echo '</pre>';
-}
-
+echo '<pre>';
+var_dump($result);
