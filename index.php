@@ -9,7 +9,8 @@ if (!file_exists($dir)) {
     mkdir($dir, 0775, true);
 }
 
-class Task extends FromRow {
+class Task extends FromRow
+{
     public int $id;
     public string $title;
     public string $description;
@@ -17,7 +18,8 @@ class Task extends FromRow {
 }
 
 
-class Machine extends FromRow {
+class Machine extends FromRow
+{
     public int $id;
     public string $name;
     public string $make;
@@ -27,13 +29,24 @@ $conn = new SQLite3($dir . $file);
 
 $result = pql::query_as(
     Task::class,
-    'SELECT task.id, task.title, task.description, machine.id, machine.name, machine.make FROM 
+    'SELECT 
+        task.id, 
+        task.title, 
+        task.description,
+        machine.id, 
+        machine.name, 
+        machine.make 
+    FROM 
         task
     LEFT JOIN 
-        machine ON machine.id = task.machine
-    WHERE machine.id = ?;',
+        machine 
+    ON 
+        machine.id = task.machine
+    WHERE 
+        machine.id = ?;',
     1
 )->fetch_all($conn);
 
-echo '<pre>';
-var_dump($result);
+
+header('Content-Type: application/json; charset=utf-8');
+echo json_encode($result);
